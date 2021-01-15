@@ -1,0 +1,173 @@
+[
+{
+  "model": "xchem_db.target",
+  "pk": 5,
+  "fields": {
+    "target_name": "NUDT5A"
+  }
+},
+{
+  "model": "xchem_db.compounds",
+  "pk": 5,
+  "fields": {
+    "smiles": "CC1CCOC1C(=O)NC2=CN=NS2"
+  }
+},
+{
+  "model": "xchem_db.reference",
+  "pk": 5,
+  "fields": {
+    "reference_pdb": "/pipeline/tests/data/processing/reference/6gru.pdb"
+  }
+},
+{
+  "model": "xchem_db.proposals",
+  "pk": 5,
+  "fields": {
+    "proposal": "lb13385",
+    "title": "NUDT5A",
+    "fedids": null
+  }
+},
+{
+  "model": "xchem_db.soakdbfiles",
+  "pk": 6,
+  "fields": {
+    "filename": "/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite",
+    "modification_date": 20200115170639,
+    "proposal": 5,
+    "visit": "",
+    "status": 2
+  }
+},
+{
+  "model": "xchem_db.crystal",
+  "pk": 5,
+  "fields": {
+    "crystal_name": "NUDT5A-x0114",
+    "target": 5,
+    "compound": 5,
+    "visit": 6,
+    "product": null,
+    "status": "PP"
+  }
+},
+{
+  "model": "xchem_db.dataprocessing",
+  "pk": 5,
+  "fields": {
+    "auto_assigned": "True",
+    "cchalf_high": 0.297,
+    "cchalf_low": 0.995,
+    "cchalf_overall": 0.995,
+    "completeness_high": 95.4,
+    "completeness_low": 98.2,
+    "completeness_overall": 96.4,
+    "crystal_name": 5,
+    "dimple_mtz_path": null,
+    "dimple_pdb_path": null,
+    "dimple_status": "True",
+    "image_path": null,
+    "isig_high": 1.0,
+    "isig_low": 25.1,
+    "isig_overall": 7.5,
+    "lattice": "triclinic",
+    "log_name": "NUDT5A-x0114.log",
+    "logfile_path": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/autoprocessing/lb18145-79-NUDT5A-x0114_1_dials-runP1/lb18145v79_xNUDT5Ax01141_aimless.log",
+    "mtz_name": "NUDT5A-x0114.mtz",
+    "mtz_path": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/autoprocessing/lb18145-79-NUDT5A-x0114_1_dials-runP1/lb18145v79_xNUDT5Ax01141_free.mtz",
+    "multiplicity_high": 1.7,
+    "multiplicity_low": 1.7,
+    "multiplicity_overall": 1.7,
+    "original_directory": "/dls/i04-1//pipeline/tests/data/2018/lb18145-79/processed/NUDT5A/NUDT5A-x0114/NUDT5A-x0114_1_/xia2/dials-runP1",
+    "point_group": "1",
+    "program": null,
+    "r_cryst": null,
+    "r_free": null,
+    "r_merge_high": 0.557,
+    "r_merge_low": 0.027,
+    "r_merge_overall": 0.05,
+    "res_high": 1.89,
+    "res_high_15_sigma": 2.0,
+    "res_high_outer_shell": 1.94,
+    "res_low": 57.29,
+    "res_low_inner_shell": 8.45,
+    "res_overall": "57.29 - 1.89",
+    "score": 222.720603248,
+    "spacegroup": "P 1",
+    "status": null,
+    "unique_ref_overall": 67122,
+    "unit_cell": "49 59 80 79 81 75",
+    "unit_cell_vol": 217892.755732
+  }
+},
+{
+  "model": "xchem_db.dimple",
+  "pk": 5,
+  "fields": {
+    "crystal_name": 5,
+    "mtz_path": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/dimple/dimple_rerun_on_selected_file/dimple/final.mtz",
+    "pdb_path": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/dimple/dimple_rerun_on_selected_file/dimple/final.pdb",
+    "r_free": 0.26212,
+    "res_high": 1.89,
+    "status": "finished",
+    "reference": 5
+  }
+},
+{
+  "model": "xchem_db.lab",
+  "pk": 5,
+  "fields": {
+    "cryo_frac": 5.0,
+    "cryo_status": "done",
+    "cryo_stock_frac": 100.0,
+    "cryo_transfer_vol": null,
+    "crystal_name": 5,
+    "data_collection_visit": "lb18145-79",
+    "expr_conc": 10.4,
+    "harvest_status": "done",
+    "library_name": "DSIpoised",
+    "library_plate": "DSIpoised_001_Set1",
+    "mounting_result": "OK: Mounted Clear",
+    "mounting_time": "1.93287037037037E-04",
+    "soak_status": "done",
+    "soak_time": "00:35:19",
+    "soak_vol": 17.5,
+    "solv_frac": 10.0,
+    "stock_conc": 100.0,
+    "visit": "lb18145-71"
+  }
+},
+{
+  "model": "xchem_db.refinement",
+  "pk": 5,
+  "fields": {
+    "bound_conf": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/Refine_0016/refine_16.split.bound-state.pdb",
+    "cif": "Z1827602749.cif",
+    "cif_prog": "grade",
+    "cif_status": "restraints generated",
+    "crystal_name": 5,
+    "lig_bound_conf": null,
+    "lig_cc": null,
+    "lig_confidence": null,
+    "lig_confidence_int": null,
+    "lig_confidence_string": " High Confidence",
+    "matrix_weight": "0.14690530",
+    "molprobity_score": 2.01,
+    "mtz_free": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/NUDT5A-x0114.free.mtz",
+    "mtz_latest": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/Refine_0016/refine_16.mtz",
+    "outcome": 6,
+    "pdb_latest": "/pipeline/tests/data/processing/analysis/initial_model/NUDT5A-x0114/Refine_0016/refine_16.pdb",
+    "r_free": 0.25288,
+    "ramachandran_favoured": "96.43",
+    "ramachandran_outliers": "0.93",
+    "rcryst": 0.21501,
+    "refinement_path": null,
+    "res": 1.89,
+    "rmsd_angles": "1.771",
+    "rmsd_bonds": "0.016",
+    "spacegroup": "P 1",
+    "status": "finished"
+  }
+}
+]
