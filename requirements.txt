@@ -1,0 +1,5 @@
+django
+psycopg2-binary
+django_extensions
+django-mysql
+mysql-connector-python~=8.0
