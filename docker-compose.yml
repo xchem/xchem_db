@@ -11,13 +11,20 @@ services:
       MYSQL_ROOT_PASSWORD: "docker-root"
 
   web:
+    depends_on:
+      - db
     build: .
-    command: /bin/bash -c "python3.6 manage.py makemigrations && python3.6 manage.py migrate && python3.6 manage.py makemigrations xchem_db && python3.6 manage.py migrate xchem_db && python3.6 manage.py runserver 0.0.0.0:8000"
+    command: >
+      /bin/bash -c "python3.6 manage.py makemigrations &&
+      python3.6 manage.py migrate &&
+      python3.6 manage.py makemigrations xchem_db &&
+      python3.6 manage.py migrate xchem_db &&
+      python3.6 manage.py graph_models -a -o schema.png &&
+      python3.6 run_sql_gen.py &&
+      python3.6 manage.py runserver 0.0.0.0:8000"
     container_name: xcdb
     restart: always
     volumes:
       - .:/xcdb
     ports: 
       - "8000:8000"
-    depends_on:
-      - db
