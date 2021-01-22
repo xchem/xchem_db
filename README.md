@@ -79,6 +79,7 @@ command: >
 - To rebuild the web image use ``docker-compose build .``
 - To specify which docker-compose file to use in any command use the ``-f`` flag
 - To get into the container use ``docker run -it xcdb /bin/bash``
+- To run a command in the web container ``docker-compose run web <command>``
 
 
 ## Instructions for deploying changes
