@@ -21,9 +21,9 @@ jobs:
       - name: Step 0 - Setup environment (apt-get)
         run: |
           sudo apt-get update 
-          && sudo apt-get install -y python-psycopg2 graphviz libgraphviz-dev
-          && sudo apt-get install -y default-libmysqlclient-dev build-essential
-          && sudo apt-get remove -y default-libmysqlclient-dev build-essential
+          sudo apt-get install -y python-psycopg2 graphviz libgraphviz-dev
+          sudo apt-get install -y default-libmysqlclient-dev build-essential
+          sudo apt-get remove -y default-libmysqlclient-dev build-essential
       - name: Step 1 - Start MariaDB
         uses: getong/mariadb-action@v1.1
         with:
