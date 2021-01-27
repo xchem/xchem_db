@@ -24,8 +24,8 @@ jobs:
         cd schemas/xchem_db
         mkdir updates
         cd updates
-        cp ../../../../../sql/* .
+        cp /sql/* .
         cd ../
-        cp ../../../../../init.sql .
+        cp /init.sql .
         
         
