@@ -20,7 +20,7 @@ jobs:
         git clone https://user:$GITHUB_TOKEN@github.com/DiamondLightSource/ispyb-database
         cd ispyb-database
         git checkout -b xchem-updates
-        mkdirs schemas/xchem_db
+        mkdir -p schemas/xchem_db
         cd schemas/xchem_db
         mkdir updates
         cd updates
