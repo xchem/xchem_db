@@ -18,7 +18,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      python-version: [3.6, 3.7, 3.8]
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
     steps:
       - name: Step 0 - Setup environment (apt-get)
         run: |
