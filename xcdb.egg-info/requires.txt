@@ -1,0 +1,12 @@
+django
+psycopg2-binary
+django_extensions
+django-mysql
+mysql-connector-python
+pygraphviz
+
+[dev]
+check-manifest
+
+[test]
+coverage

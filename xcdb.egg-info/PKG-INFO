@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: xcdb
+Version: 0.2.0b0
+Summary: Library for XChem Django database
+Home-page: https://github.com/xchem/xchem_db.git
+Author: Rachael Skyner
+Author-email: rachael.skyner@diamond.ac.uk
+License: Apache 2.0
+Description: Stand-alone version of django module for xchem db. See github.com/xchem/xchem_db for more info
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3.6
+Provides-Extra: dev
+Provides-Extra: test
