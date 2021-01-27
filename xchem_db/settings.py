@@ -75,6 +75,23 @@ WSGI_APPLICATION = 'xchem_db.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'docker',
+        'USER': 'docker',
+        'PASSWORD': 'docker',
+        "DEFAULT-CHARACTER-SET": 'utf8',
+        'HOST': 'db',
+        'PORT': 3306,
+        'OPTIONS': {
+                'autocommit': True,
+                'raise_on_warnings': True,
+        },
+    }
+    }
+
 if os.environ.get('GITHUB_WORKFLOW'):
     DATABASES = {
             'default': {
@@ -91,22 +108,6 @@ if os.environ.get('GITHUB_WORKFLOW'):
                 },
             }
         }
-else:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'mysql.connector.django',
-                'NAME': 'docker',
-                'USER': 'docker',
-                'PASSWORD': 'docker',
-                "DEFAULT-CHARACTER-SET": 'utf8',
-                'HOST': 'db',
-                'PORT': 3306,
-                'OPTIONS': {
-                        'autocommit': True,
-                        'raise_on_warnings': True,
-                },
-            }
-            }
 
 
 # Password validation
