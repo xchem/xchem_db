@@ -17,6 +17,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+            mysql:
+                image: mariadb:10.4
+                env:
+                  MYSQL_ROOT_PASSWORD: docker-root
+                  MYSQL_DATABASE: docker
+                ports:
+                  - 3306/tcp
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
     strategy:
       matrix:
         python-version: [3.6, 3.7, 3.8]
@@ -27,6 +36,8 @@ jobs:
           sudo apt-get install -y python-psycopg2 graphviz libgraphviz-dev
           sudo apt-get install -y default-libmysqlclient-dev build-essential
           sudo apt-get remove -y default-libmysqlclient-dev build-essential
+      - name : Step 2 - Checkout code
+        uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -35,17 +46,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Step 1 - Start MariaDB
-        uses: getong/mariadb-action@v1.1
-        with:
-          mysql database: 'docker' # Optional, default value is "test". The specified database which will be create
-          mysql root password: 'docker-root' # Required if "mysql user" is empty, default is empty. The root superuser password
-          mysql user: 'docker' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-          mysql password: docker # Required if "mysql user" exists. The password for the "mysql user"
-      - name : Step 2 - Set up Python (3.6)
-        uses: actions/checkout@v2
-        with:
-          python-version: 3.6
+#       - name: Step 1 - Start MariaDB
+#         uses: getong/mariadb-action@v1.1
+#         with:
+#           mysql database: 'docker' # Optional, default value is "test". The specified database which will be create
+#           mysql root password: 'docker-root' # Required if "mysql user" is empty, default is empty. The root superuser password
+#           mysql user: 'docker' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
+#           mysql password: docker # Required if "mysql user" exists. The password for the "mysql user"
       - name: Step 3 - Install dependencies         
         run: pip install -e .
       - name: Step 4 - Apply existing migrations
