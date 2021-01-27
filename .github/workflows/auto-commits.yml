@@ -59,18 +59,19 @@ jobs:
       - name: Step 3 - Install dependencies         
         run: pip install -e .
       - name: Step 4 - Apply existing migrations
-        run: python3.6 manage.py migrate
+        run: python manage.py migrate
       - name: Step 5 - Create new migrations
-        run: python3.6 manage.py makemigrations xchem_db
+        run: python manage.py makemigrations xchem_db
       - name: Step 6 - Apply new migrations
-        run: python3.6 manage.py migrate xchem_db
+        run: python manage.py migrate xchem_db
       - name: Step 7 - Create new schema image
-        run: python3.6 manage.py graph_models -a -o schema.png
+        run: python manage.py graph_models -a -o schema.png
       - name: Step 8 - Generate SQL for ISPyB
-        run: python3.6 run_sql_gen.py
+        run: python run_sql_gen.py
       - name: Step 9 - Append new SQL to master file
-        run: python3.6 compile_init.py
+        run: python compile_init.py
       - name: Step 10 - Commit changed files
+        if: $${{ matrix.python-version }} == 3.6
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Auto-commit of new versions of migrations, SQL files & schema image
