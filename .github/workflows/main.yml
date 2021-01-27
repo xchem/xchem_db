@@ -18,12 +18,14 @@ jobs:
     - name: Add files to remote repo
       run: |
         git clone https://user:$GITHUB_TOKEN@github.com/DiamondLightSource/ispyb-database
+        pwd
         cd ispyb-database
         git checkout -b xchem-updates
         mkdir -p schemas/xchem_db
         cd schemas/xchem_db
         mkdir updates
         cd updates
+        pwd
         cp /sql/* .
         cd ../
         cp /init.sql .
