@@ -29,6 +29,8 @@ jobs:
         cp $HOME_DIR/sql/* .
         cd ../
         cp $HOME_DIR/init.sql .
+        git config --global user.email "actions-bot@github.com"
+        git config --global user.name "GiHub Actions Bot"
         git commit -a -m "Autocommit of XChem DB schema changes"
         git push origin xchem-updates
         
