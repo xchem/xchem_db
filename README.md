@@ -39,6 +39,8 @@ To build the containers from ``docker-compose.dev.yml``:
 docker-compose -f docker-compose.dev.yml up
 ```
 
+If the build was successful, you should see the django landing page at ``http://localhost:8000``.
+
 During the setup of the ``db`` container, the ``init.sql`` file is used to pre-populate the database with the tables 
 that are expected to exist already (based on the migrations in xchem_db). This is acheived by the following lines in 
 the docker-compose file:
