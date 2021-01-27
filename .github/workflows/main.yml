@@ -27,10 +27,10 @@ jobs:
         cd updates
         pwd
         cp $HOME_DIR/sql/* .
-        git add -a
+        git add -A
         cd ../
         cp $HOME_DIR/init.sql .
-        git add -a
+        git add -A
         git config --global user.email "actions-bot@github.com"
         git config --global user.name "GiHub Actions Bot"
         git commit -a -m "Autocommit of XChem DB schema changes"
