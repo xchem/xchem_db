@@ -1,0 +1,25 @@
+name: Commit files to ISPyB repo
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  release:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add files to remote repo
+      run: |
+        git clone git@github.com:DiamondLightSource/ispyb-database
+        cd ispyb-dataase
+        git checkout -b xchem-updates
+        mkdirs schemas/xchem_db
+        cd schemas/xchem_db
+        mkdir updates
+        cd updates
+        cp ../../../../../sql/* .
+        cd ../
+        cp ../../../../../init.sql .
