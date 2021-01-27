@@ -27,7 +27,7 @@ jobs:
                   MYSQL_PASSWORD: docker 
                   MYSQL_HOST: db
                 ports:
-                  - 3306/tcp
+                  - 3306:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
     strategy:
       matrix:
