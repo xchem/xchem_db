@@ -23,6 +23,9 @@ jobs:
                 env:
                   MYSQL_ROOT_PASSWORD: docker-root
                   MYSQL_DATABASE: docker
+                  MYSQL_USER: docker
+                  MYSQL_PASSWORD: docker 
+                  MYSQL_HOST: db
                 ports:
                   - 3306/tcp
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=10s --health-retries=10
