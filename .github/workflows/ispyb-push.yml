@@ -19,7 +19,7 @@ jobs:
       run: |
         git config --global user.email "actions@github.com"
         git config --global user.name "actions-bot"
-        git clone https://x-access-token:$API_TOKEN_GITHUB@github.com/DiamondLightSource/ispyb-database
+        git clone https://$API_TOKEN_GITHUB@github.com/DiamondLightSource/ispyb-database
         cd ispyb-database
         mkdir -p schema/xchem_db
         mkdir -p schema/xchem_db/updates
