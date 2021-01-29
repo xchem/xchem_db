@@ -18,8 +18,8 @@ jobs:
       env:
         API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
       run: |
-        git config --global user.email "actions@github.com"
-        git config --global user.name "actions-bot"
+        git config --global user.email "reskyner@googlemail.com"
+        git config --global user.name "Rachael Skyner"
         git clone https://$API_TOKEN_GITHUB@github.com/DiamondLightSource/ispyb-database
         cd ispyb-database
         mkdir -p schema/xchem_db
