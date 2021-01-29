@@ -24,11 +24,11 @@ jobs:
         cd ispyb-database
         git checkout -b xchem-updates
         git pull origin xchem-updates
-        mkdir -p schema/xchem_db
-        mkdir -p schema/xchem_db/updates
-        cp ../init.sql schema/xchem_db
-        cp ../sql/*.sql schema/xchem_db/updates
-        git add schema/xchem_db/*
-        git add schema/xchem_db/updates/*
+        mkdir -p schemas/xchem_db
+        mkdir -p schemas/xchem_db/updates
+        cp ../init.sql schemas/xchem_db
+        cp ../sql/*.sql schemas/xchem_db/updates
+        git add schemas/xchem_db/*
+        git add schemas/xchem_db/updates/*
         git commit -a -m 'Auto-commit for updates to XChemDB schema'
         git push origin xchem-updates
