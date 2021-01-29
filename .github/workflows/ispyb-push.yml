@@ -22,11 +22,12 @@ jobs:
         git config --global user.name "Rachael Skyner"
         git clone https://$API_TOKEN_GITHUB@github.com/DiamondLightSource/ispyb-database
         cd ispyb-database
+        git checkout -b xchem-updates
+        git pull origin xchem-updates
         mkdir -p schema/xchem_db
         mkdir -p schema/xchem_db/updates
         cp ../init.sql schema/xchem_db
         cp ../sql/*.sql schema/xchem_db/updates
-        git checkout -b xchem-updates
         git add schema/xchem_db/*
         git add schema/xchem_db/updates/*
         git commit -a -m 'Auto-commit for updates to XChemDB schema'
