@@ -1,7 +1,7 @@
 import glob
 
 str_out = ''
-for f in glob.glob('./xcdb/sql/*.sql'):
+for f in glob.glob('./sql/*.sql'):
     to_add = open(f, 'r').read()
     str_out += to_add
 
