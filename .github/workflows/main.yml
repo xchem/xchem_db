@@ -31,7 +31,7 @@ jobs:
         cd ../
         cp $HOME_DIR/init.sql .
         git add -A
-        git config --global user.email "actions-bot@github.com"
+        git config --global user.email $PUSH_EMAIL
         git config --global user.name "GiHub Actions Bot"
         git commit -a -m "Autocommit of XChem DB schema changes"
         git push origin xchem-updates
