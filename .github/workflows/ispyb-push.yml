@@ -1,6 +1,7 @@
 name: Commit files to ISPyB repo
 env:
         API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
   release:
