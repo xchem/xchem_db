@@ -1,0 +1,32 @@
+name: Commit files to ISPyB repo
+env:
+        API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+
+on:
+  release:
+    types: [released]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+jobs:
+  push_ispyb:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+    - name: add files to ispyb (xchem-updates)
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "actions-bot"
+        git clone https://x-access-token:$API_TOKEN_GITHUB@github.com/DiamondLightSource/ispyb-database
+        cd ispyb-database
+        mkdir -p schema/xchem_db
+        mkdir -p schema/xchem_db/updates
+        cp ../init.sql schema/xchem_db
+        cp ../sql/*.sql schema/xchem_db/updates
+        git checkout -b xchem-updates
+        git add schema/xchem_db/*
+        git add schema/xchem_db/updates/*
+        git commit -a -m 'Auto-commit for updates to XChemDB schema'
+        git push origin xchem-updates
