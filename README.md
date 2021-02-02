@@ -5,11 +5,15 @@
 # xchem_db
 This repository contains the django models used to generate the XCDB schema.
 
-## To do:
-- ~~automate migration on push to main~~
-- ~~automate sql on push to main~~
-- automate commit to xchem branch on ispyb for sql
-- automate PR to xchem branch on ispyb for sql
+## Contributing
+
+To contribute to this repository, please ensure you follow the rules below:
+1. Ensure you can change the schema without affecting the data that is currently in the database. There are example data
+in ``db.json``. You can dump this into the existing schema with ``python manage.py loaddata db.json`` 
+2. Always commit to your own branch
+3. Never add any of the migrations or SQL files to your commits - this will break the builds
+4. When your changes have been accepted and merged into master, ask Rachael to release the changes so that they are 
+reflected in the production database and on PyPI 
 
 ## Getting started
 This repository contains everything you should need to develop new models for XChemDB. 
