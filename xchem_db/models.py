@@ -344,7 +344,7 @@ class Dimple(models.Model):
 class Lab(models.Model):
 
     #crystal_name = models.OneToOneField(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
-    compound = models.OneToOneField(SoakDBCompound, on_delete=models.CASCADE, unique=True)  #changed to allow cocktails
+    compound = models.OneToOneField(SoakDBCompound, on_delete=models.CASCADE, unique=True, blank=True, null=True)  #changed to allow cocktails
     #to access crystal_name now: self.compound.crystal
         
     data_collection_visit = models.CharField(max_length=64, blank=True, null=True)
