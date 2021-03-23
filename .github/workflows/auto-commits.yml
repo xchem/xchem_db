@@ -36,7 +36,7 @@ jobs:
       - name: Step 1 - Setup environment (apt-get)
         run: |
           sudo apt-get update 
-          sudo apt-get install -y psycopg2-binary graphviz libgraphviz-dev
+          sudo apt-get install -y libpq-dev graphviz libgraphviz-dev
           sudo apt-get install -y default-libmysqlclient-dev build-essential
           sudo apt-get remove -y default-libmysqlclient-dev build-essential
       - name : Step 2 - Checkout code
