@@ -69,6 +69,8 @@ class SourceWell(models.Model):
     library_plate =  models.ForeignKey(LibraryPlate, blank=True, null=True, on_delete=models.CASCADE, related_name="compounds")
     well  = models.CharField(max_length=4, blank=True, null=True)
     concentration = models.IntegerField(null=True, blank=True)
+    active = models.BooleanField(default=True)   
+    deactivation_date = models.DateField(blank=True, null=True)
 
     def __str__ (self):
         return f"{self.library_plate}: {self.well}"
