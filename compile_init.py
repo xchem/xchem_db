@@ -1,4 +1,5 @@
 import glob
+import os
 
 str_out = ''
 for f in glob.glob('./sql/*.sql'):
