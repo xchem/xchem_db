@@ -69,3 +69,4 @@ jobs:
         with:
           commit_message: Auto-commit of new versions of migrations, SQL files & schema image
           file_pattern: '*.png sql/*.sql */migrations/*'
+          push_options: --force
