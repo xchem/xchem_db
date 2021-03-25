@@ -7,3 +7,7 @@ for f in glob.glob('./sql/*.sql'):
 
 with open('init.sql', 'w+') as w:
     w.write(str_out)
+    
+if not os.path.isfile('init.sql'):
+    raisse Exception('init.sql file not generated - this needs to exist to create XCDB!')
+    
