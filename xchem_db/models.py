@@ -629,6 +629,7 @@ class ReviewResponses2(models.Model):
     decision_str = models.TextField(blank=False, null=False)
     reason = models.TextField(blank=False, null=False)
     time_submitted = models.IntegerField(blank=False, null=False)
+    comment = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'review_responses_new'
