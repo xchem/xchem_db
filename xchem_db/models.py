@@ -32,6 +32,8 @@ class Compounds(models.Model):
     ring_count = models.IntegerField(blank=True, null=True)
     tpsa = models.FloatField(blank=True, null=True)
     
+    mol_image = models.ImageField(upload_to="images/molecules/", null=True, blank=True)
+    
     def __str__ (self):
         return self.code
 
@@ -42,6 +44,21 @@ class Library(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     for_industry = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
+    
+    #histograms of properties within the library (based on compounds available current plate(s))
+    log_p_graph = models.ImageField(upload_to="images/graphs/log_p/", blank=True, null=True)
+    mol_wt_graph = models.ImageField(upload_to="images/graphs/mol_wt/", blank=True, null=True)
+    heavy_atom_count_graph = models.ImageField(upload_to="images/graphs/heavy_atom_count/", blank=True, null=True)
+    heavy_atom_mol_wt_graph = models.ImageField(upload_to="images/graphs/heavy_atom_mol_wt/", blank=True, null=True)
+    nhoh_count_graph = models.ImageField(upload_to="images/graphs/nhoh_count/", blank=True, null=True)
+    no_count_graph = models.ImageField(upload_to="images/graphs/no_count/", blank=True, null=True)
+    num_h_acceptors_graph = models.ImageField(upload_to="images/graphs/num_h_acceptors/", blank=True, null=True)
+    num_h_donors_graph = models.ImageField(upload_to="images/graphs/num_h_donors/", blank=True, null=True)
+    num_het_atoms_graph = models.ImageField(upload_to="images/graphs/num_het_atoms/", blank=True, null=True)
+    num_rot_bonds_graph = models.ImageField(upload_to="images/graphs/num_rot_bonds/", blank=True, null=True)
+    num_val_electrons_graph = models.ImageField(upload_to="images/graphs/num_val_electrons/", blank=True, null=True)
+    ring_count_graph = models.ImageField(upload_to="images/graphs/ring_count/", blank=True, null=True)
+    tpsa_graph = models.ImageField(upload_to="images/graphs/tpsa/", null=True, blank=True)
 
     def __str__ (self):
         return self.name
@@ -60,7 +77,13 @@ class LibraryPlate(models.Model):
         return len(self.compounds.all())
 
     def __str__ (self):
-        return f"[{self.id}]{self.library}, {self.name}"
+        return f"[{self.id}]{self.library}, {self.barcode}"
+
+class PlateOpening(models.Model):
+	'''An instance when a library plate is opened'''
+	plate = models.ForeignKey(LibraryPlate, on_delete=models.CASCADE, related_name="opened")
+	date = models.DateField()
+	reason = models.TextField(blank=True, null=True)
 
 class SourceWell(models.Model):
     '''location of a particular compound in a particular library plate; concentration not always available'''
@@ -74,6 +97,12 @@ class SourceWell(models.Model):
 
     def __str__ (self):
         return f"{self.library_plate}: {self.well}"
+
+class SWStatuschange(models.Model):
+	'''an instance of marking a SourceWell active or inactive'''
+	source_well = models.ForeignKey(SourceWell, on_delete=models.CASCADE, related_name="status_changes")
+	date = models.DateField()
+	activation = models.BooleanField(default=False)
 
 class LibrarySubset(models.Model):
     '''A selection of compounds from a specific library; always created automatically
