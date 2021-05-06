@@ -4,4 +4,3 @@ django_extensions
 django-mysql
 mysql-connector-python~=8.0
 pygraphviz
-Pillow=8.1

@@ -31,9 +31,7 @@ class Compounds(models.Model):
     num_val_electrons = models.IntegerField(blank=True, null=True)
     ring_count = models.IntegerField(blank=True, null=True)
     tpsa = models.FloatField(blank=True, null=True)
-    
-    mol_image = models.ImageField(upload_to="images/molecules/", null=True, blank=True)
-    
+        
     def __str__ (self):
         return self.code
 
@@ -45,21 +43,6 @@ class Library(models.Model):
     for_industry = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
     
-    #histograms of properties within the library (based on compounds available current plate(s))
-    log_p_graph = models.ImageField(upload_to="images/graphs/log_p/", blank=True, null=True)
-    mol_wt_graph = models.ImageField(upload_to="images/graphs/mol_wt/", blank=True, null=True)
-    heavy_atom_count_graph = models.ImageField(upload_to="images/graphs/heavy_atom_count/", blank=True, null=True)
-    heavy_atom_mol_wt_graph = models.ImageField(upload_to="images/graphs/heavy_atom_mol_wt/", blank=True, null=True)
-    nhoh_count_graph = models.ImageField(upload_to="images/graphs/nhoh_count/", blank=True, null=True)
-    no_count_graph = models.ImageField(upload_to="images/graphs/no_count/", blank=True, null=True)
-    num_h_acceptors_graph = models.ImageField(upload_to="images/graphs/num_h_acceptors/", blank=True, null=True)
-    num_h_donors_graph = models.ImageField(upload_to="images/graphs/num_h_donors/", blank=True, null=True)
-    num_het_atoms_graph = models.ImageField(upload_to="images/graphs/num_het_atoms/", blank=True, null=True)
-    num_rot_bonds_graph = models.ImageField(upload_to="images/graphs/num_rot_bonds/", blank=True, null=True)
-    num_val_electrons_graph = models.ImageField(upload_to="images/graphs/num_val_electrons/", blank=True, null=True)
-    ring_count_graph = models.ImageField(upload_to="images/graphs/ring_count/", blank=True, null=True)
-    tpsa_graph = models.ImageField(upload_to="images/graphs/tpsa/", null=True, blank=True)
-
     def __str__ (self):
         return self.name
 
