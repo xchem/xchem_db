@@ -665,3 +665,6 @@ class MetaData(models.Model):
     pdb_id = models.CharField(max_length=255, blank=True)
     fragalysis_name = models.CharField(max_length=255, unique=True)
     original_name = models.CharField(max_length=255)
+    
+    class Meta:
+	db_table = 'MetaData'
