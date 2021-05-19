@@ -22,6 +22,10 @@ ALTER TABLE `xchem_db_sourcewell` ALTER COLUMN `active` DROP DEFAULT;
 --
 ALTER TABLE `xchem_db_sourcewell` ADD COLUMN `deactivation_date` date NULL;
 --
+-- Rename table for metadata to MetaData
+--
+RENAME TABLE `xchem_db_metadata` TO `MetaData`;
+--
 -- Create model Compounds
 --
 CREATE TABLE `xchem_db_compounds` (`id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY, `smiles` varchar(255) NULL, `code` varchar(32) NULL, `log_p` double precision NULL, `mol_wt` double precision NULL, `heavy_atom_count` integer NULL, `heavy_atom_mol_wt` double precision NULL, `nhoh_count` integer NULL, `no_count` integer NULL, `num_h_acceptors` integer NULL, `num_h_donors` integer NULL, `num_het_atoms` integer NULL, `num_rot_bonds` integer NULL, `num_val_electrons` integer NULL, `ring_count` integer NULL, `tpsa` double precision NULL);
