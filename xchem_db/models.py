@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.db import models
 
+from ispyb_dja.django_auth.models import IspybAuthorization
+
 #INVENTORY DATA
 
 class Protein(models.Model):
@@ -122,10 +124,16 @@ class Reference(models.Model):
 
 class Proposals(models.Model):
 
+    # Fields in this model:
+    # project = models.CharField(max_length=200, unique=True)
+    # proposal_visit = models.CharField(max_length=200, unique=True)
+    # users = models.ManyToManyField(User)
+    proposal_visit = models.ForeignKey(IspybAuthorization, on_delete=models.CASCADE)
+
     # TODO - can we refactor this for title [original comment]
-    proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
-    title = models.CharField(max_length=10, blank=True, null=True)
-    fedids = models.TextField(blank=True, null=True)
+    # proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    # title = models.CharField(max_length=10, blank=True, null=True)
+    # fedids = models.TextField(blank=True, null=True)
 
     #SPA-related data
     industry_user = models.BooleanField(default=True) # just in case false by default - fewer privileges
@@ -137,9 +145,9 @@ class Proposals(models.Model):
          return self.name + "proposal object"
          
 
-class Visit(models.Model):
-	visit_name = models.CharField(max_length=32, blank=True, null=True)
-	proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
+# class Visit(models.Model):
+#     visit_name = models.CharField(max_length=32, blank=True, null=True)
+#     proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
 	
 
 
