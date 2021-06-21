@@ -166,7 +166,7 @@ class Proposals(models.Model):
 class SoakdbFiles(models.Model):
     filename = models.CharField(max_length=255, blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
-    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
+    project = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
     visit = models.TextField(blank=False, null=False)
     status = models.IntegerField(blank=True, null=True)
 
@@ -185,7 +185,7 @@ class SpaCompound(models.Model):
     '''Compound data copied from inventory data when the compound is used
     in the experiment'''
 
-    visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey(Proposals, blank=True, null=True, on_delete=models.CASCADE)
     library_name = models.CharField(max_length=100)
     library_plate = models.CharField(max_length=100)
     well = models.CharField(max_length=4)
@@ -201,7 +201,7 @@ class Crystal(models.Model):
     #compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True) # Compounds is now an inventory model, not used directly in an experiment
     #visit = models.ForeignKey(SoakdbFiles, blank=True, null=True, on_delete=models.CASCADE) # blank/null temporarily added <---- old
     soakdb_file = models.ForeignKey(SoakdbFiles, blank=True, null=True, on_delete=models.CASCADE) # replaces old 'visit' field
-    visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.CASCADE) # new 'visit' field for experiments made without SoakDB
+    project = models.ForeignKey(Proposals, blank=True, null=True, on_delete=models.CASCADE) # new 'visit' field for experiments made without SoakDB
     
     product = models.CharField(max_length=255, blank=True, null=True)
 
@@ -237,7 +237,7 @@ class Crystal(models.Model):
 
 class CompoundCombination(models.Model):
 	'''for combisoaks and cocktails'''
-	visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.PROTECT)
+	project = models.ForeignKey(Proposals, blank=True, null=True, on_delete=models.PROTECT)
 	number = models.IntegerField(blank=True, null=True)
 	compounds = models.ManyToManyField(SpaCompound)
 	related_crystals = models.CharField(max_length=64, null=True, blank=True)
@@ -252,7 +252,7 @@ class SolventNotes(models.Model):
     not to be processed any further except for reminding the user to 
     apply cryo'''
     
-    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
+    project = models.ForeignKey(Proposals, on_delete=models.CASCADE)
     solvent = models.CharField(max_length=32, blank=True, null=True)
     solvent_concentration = models.FloatField(blank=True, null=True)
     soak_time = models.DurationField(blank=True, null=True)
