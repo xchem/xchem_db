@@ -167,7 +167,7 @@ class SoakdbFiles(models.Model):
     filename = models.CharField(max_length=255, blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     project = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
-    visit = models.TextField(blank=False, null=False)
+    # visit = models.TextField(blank=False, null=False)
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -232,7 +232,7 @@ class Crystal(models.Model):
 
     class Meta:
 #        unique_together = ('crystal_name', 'visit', 'compound', 'product') <-- old
-        unique_together = ('crystal_name', 'visit', 'product') #removed compound from unique_together to allow for cocktails
+        unique_together = ('crystal_name', 'project', 'product') #removed compound from unique_together to allow for cocktails
 
 
 class CompoundCombination(models.Model):
@@ -372,11 +372,11 @@ class Lab(models.Model):
     #compound = models.OneToOneField(SpaCompound, on_delete=models.CASCADE, unique=True, blank=True, null=True)  #changed to allow cocktails
     #to access crystal_name now: self.compound.crystal
         
-    data_collection_visit = models.CharField(max_length=64, blank=True, null=True)
+    data_collection_project = models.ForeignKey(Proposals, max_length=64, blank=True, null=True, on_delete=models.CASCADE)
     harvest_status = models.CharField(max_length=64, blank=True, null=True)
     mounting_result = models.CharField(max_length=64, blank=True, null=True)
     mounting_time = models.CharField(max_length=64, blank=True, null=True)
-    visit = models.CharField(max_length=64, blank=True, null=True)
+    data_collection_project = models.ForeignKey(Proposals, max_length=64, blank=True, null=True, on_delete=models.CASCADE)
 
     #new attributes
     batch = models.ForeignKey(Batch, blank=True, null=True, on_delete=models.PROTECT) #null for solvent testing
