@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 
-from ispyb_dja.django_auth.models import IspybAuthorization
+from django_auth.models import IspybAuthorization
 
 #INVENTORY DATA
 
