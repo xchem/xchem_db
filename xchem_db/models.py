@@ -641,7 +641,7 @@ class MiscFiles(models.Model):
     description = models.TextField()
 
     class Meta:
-        db_table = 'MiscFiles'
+        db_table = 'MiscFiles'  # Convert to lowercase?
 
 
 class FragalysisTarget(models.Model):
@@ -654,7 +654,7 @@ class FragalysisTarget(models.Model):
     additional_files = models.ManyToManyField(MiscFiles)
 
     class Meta:
-        db_table = 'FragalysisTarget'
+        db_table = 'FragalysisTarget'  # Convert to lowercase?
 
 
 class FragalysisLigand(models.Model):
@@ -674,7 +674,7 @@ class FragalysisLigand(models.Model):
     modification_date = models.BigIntegerField(blank=False, null=False)
 
     class Meta:
-        db_table = 'FragalysisLigand'
+        db_table = 'FragalysisLigand'  # Convert to lowercase?
 
 
 class Ligand(models.Model):
@@ -684,26 +684,13 @@ class Ligand(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
 
-# Old Review
+    class Meta:
+        db_table = 'ligand'
+
+# New Class as the old one is STILL IN USE!
 
 
 class ReviewResponses(models.Model):
-    # This may not be correctly linked in psql...
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    # may need to be changed to ligand in the end. Depends on XCR
-    # Ligand_name = models.ForeignKey(Ligand)
-    fedid = models.TextField(blank=False, null=False)
-    decision_int = models.IntegerField(blank=False, null=False)
-    decision_str = models.TextField(blank=False, null=False)
-    reason = models.TextField(blank=False, null=False)
-    time_submitted = models.IntegerField(blank=False, null=False)
-
-    class Meta:
-        db_table = 'review_responses'
-
-
-# New Class as the old one is STILL IN USE!
-class ReviewResponses2(models.Model):
     # This may not be correctly linked in psql...
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     # may need to be changed to ligand in the end. Depends on XCR
@@ -715,14 +702,16 @@ class ReviewResponses2(models.Model):
     time_submitted = models.IntegerField(blank=False, null=False)
 
     class Meta:
+        # Probably change this name in the future - before it get rebuilt and then I can change it later although we'd move over to endpoints
         db_table = 'review_responses_new'
 
 
 class BadAtoms(models.Model):
-    Review = models.ForeignKey(ReviewResponses2, on_delete=models.CASCADE)
+    Review = models.ForeignKey(ReviewResponses, on_delete=models.CASCADE)
     Ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
     atomid = models.IntegerField(blank=False, null=False)
     comment = models.TextField(blank=False, null=False)
+    atomname = models.TextField(blank=True, null=False)
 
     class Meta:
         db_table = 'bad_atoms'
@@ -738,7 +727,7 @@ class MetaData(models.Model):
     original_name = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'MetaData'
+        db_table = 'MetaData'  # change to lower case too?
 
 
 class PipelineParams(models.Model):
@@ -762,29 +751,14 @@ class PipelineParams(models.Model):
 
 
 class ProteinSite(models.Model):
-    """
-    Gist of ProteinSite is that given a specific crystal one can specify with greater control in targetted alignments.
-        - Given a FragalysisTarget
-        - Specify a crystal within the FragalysisTarget set. e.g. Mpro-x0072
-        - Provide a proposed site that is provided by a FragalysisLigand e.g. Mpro-x1119_0A
-        - Specify the name, chain and residue information for the site
-        - Fragalysis-api should then have a method that would align using residue indicies output name would be Mpro-x0072_{site_name}_0A etc
-    This model needs work as I need to think more on how it should be encoded in XCDB and how the pipeline and the fragalysis API should behave given this information.
-    So a user will specify (somehow) Mpro-x0072 should be aligned to Mpro-x1119_0A using all atoms within residues [28,29,50,68,80]
-    Thusly if we want to make a new site we would have to specify which crystals we would like to align since not all crystals would need aligning 
-    (e.g. if they are in an allosteric site and not in the active site)
-    Also relies on chains being similar enough to allow gemmi to align correct as we either coordinate residue index OR use the specific residue names (the sequences will need to be exactly the same)
-    """
-    fragalysis_target = models.ForeignKey(
-        FragalysisTarget, on_delete=models.CASCADE)  # Where should this be renders
-    #  Where does the information originate from (tautological as FragTarget will have Target as CharField... should be FK...)
-    target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    crystal = models.ForeignKey(
-        Crystal, on_delete=models.CASCADE)  # Crystal To Align
     Fragalysis_Ligand_Reference = models.ForeignKey(
         FragalysisLigand, on_delete=models.CASCADE)  # Crystal to be aligned to
     site_name = models.CharField(max_length=50, blank=False, null=False)
     site_chain = models.CharField(max_length=50, blank=False, null=False)
+    site_conformation = models.CharField(
+        max_length=50, blank=False, null=False)
+    site_crystal_form = models.CharField(
+        max_length=50, blank=False, null=False)
     # Will these work when we switch to MariaDB? Away from Postgres? Residue names for better precision
     site_residue_names = models.ArrayField()
     # Will these work when we switch to MariaDB? Away from Postgres?
@@ -794,3 +768,12 @@ class ProteinSite(models.Model):
 
     class Meta:
         db_table = 'protein_sites'
+
+
+class SiteMapping(models.Model):
+    site = models.ForeignKey(ProteinSite, on_delete=models.CASCADE)  # The site
+    # The ligand which belongs in this site
+    ligand = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'site_mapping'
