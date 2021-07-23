@@ -641,7 +641,7 @@ class MiscFiles(models.Model):
     description = models.TextField()
 
     class Meta:
-        db_table = 'MiscFiles'  # Convert to lowercase?
+        db_table = 'misc_files'
 
 
 class FragalysisTarget(models.Model):
@@ -654,7 +654,7 @@ class FragalysisTarget(models.Model):
     additional_files = models.ManyToManyField(MiscFiles)
 
     class Meta:
-        db_table = 'FragalysisTarget'  # Convert to lowercase?
+        db_table = 'fragalysis_target'
 
 
 class FragalysisLigand(models.Model):
@@ -674,7 +674,7 @@ class FragalysisLigand(models.Model):
     modification_date = models.BigIntegerField(blank=False, null=False)
 
     class Meta:
-        db_table = 'FragalysisLigand'  # Convert to lowercase?
+        db_table = 'fragalysis_ligand'
 
 
 class Ligand(models.Model):
@@ -703,7 +703,7 @@ class ReviewResponses(models.Model):
 
     class Meta:
         # Probably change this name in the future - before it get rebuilt and then I can change it later although we'd move over to endpoints
-        db_table = 'review_responses_new'
+        db_table = 'review_responses'
 
 
 class BadAtoms(models.Model):
@@ -727,7 +727,7 @@ class MetaData(models.Model):
     original_name = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'MetaData'  # change to lower case too?
+        db_table = 'meta_data'
 
 
 class PipelineParams(models.Model):
