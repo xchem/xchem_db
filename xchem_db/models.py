@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.db.models.deletion import CASCADE
+from ispyb_dja.django_auth.models import IspybAuthorization
 
 #INVENTORY DATA
 
@@ -60,7 +62,14 @@ class LibraryPlate(models.Model):
         return len(self.compounds.all())
 
     def __str__ (self):
-        return f"[{self.id}]{self.library}, {self.name}"
+        return f"[{self.id}]{self.library}, {self.barcode}"
+
+
+class PlateOpening(models.Model):
+	'''An instance when a library plate is opened'''
+	plate = models.ForeignKey(LibraryPlate, on_delete=models.CASCADE, related_name="opened")
+	date = models.DateField()
+	reason = models.TextField(blank=True, null=True)
 
 class SourceWell(models.Model):
     '''location of a particular compound in a particular library plate; concentration not always available'''
@@ -74,6 +83,13 @@ class SourceWell(models.Model):
 
     def __str__ (self):
         return f"{self.library_plate}: {self.well}"
+
+
+class SWStatuschange(models.Model):
+	'''an instance of marking a SourceWell active or inactive'''
+	source_well = models.ForeignKey(SourceWell, on_delete=models.CASCADE, related_name="status_changes")
+	date = models.DateField()
+	activation = models.BooleanField(default=False)
 
 class LibrarySubset(models.Model):
     '''A selection of compounds from a specific library; always created automatically
@@ -98,9 +114,6 @@ class Preset(models.Model):
     description = models.TextField(blank=True, null=True)
     subsets = models.ManyToManyField(LibrarySubset, blank=True)
 
-#EXPERIMENTAL DATA: old xchem_db models and new addition 
-
-
 class Tasks(models.Model):
     task_name = models.CharField(max_length=255, blank=False, null=False, unique=False, db_index=True)
     uuid = models.CharField(max_length=37, blank=False, null=False, unique=True, db_index=True)
@@ -120,12 +133,15 @@ class Target(models.Model):
 class Reference(models.Model):
     reference_pdb = models.CharField(max_length=255, null=True, default='not_assigned', unique=True)
 
-class Proposals(models.Model):
+#EXPERIMENTAL DATA: old xchem_db models and new addition 
+class Project(models.Model):
+    auth = models.ManyToManyField(IspybAuthorization, blank=True, related_name="project_obj")
+    '''
+    added related_name to avoid the following error (while trying to make migrations):
+    >xchem_db.Project.auth: (fields.E303) Reverse query name for 'Project.auth' clashes with field name 'IspybAuthorization.project'.
+	>HINT: Rename field 'IspybAuthorization.project', or add/change a related_name argument to the definition for field 'Project.auth'.
 
-    # TODO - can we refactor this for title [original comment]
-    proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
-    title = models.CharField(max_length=10, blank=True, null=True)
-    fedids = models.TextField(blank=True, null=True)
+    '''
 
     #SPA-related data
     industry_user = models.BooleanField(default=True) # just in case false by default - fewer privileges
@@ -134,20 +150,12 @@ class Proposals(models.Model):
     subsets = models.ManyToManyField(LibrarySubset, blank=True)
 
     def __str__(self):
-         return self.name + "proposal object"
+         return self.proposal + "project object"
          
-
-class Visit(models.Model):
-	visit_name = models.CharField(max_length=32, blank=True, null=True)
-	proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
-	
-
-
 class SoakdbFiles(models.Model):
     filename = models.CharField(max_length=255, blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
-    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
-    visit = models.TextField(blank=False, null=False)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, unique=False)
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -158,32 +166,17 @@ class CrystalPlate(models.Model):
     name = models.CharField(max_length=100, default="new_plate")
     drop_volume = models.FloatField(blank=True, null=True)
     plate_type = models.CharField(max_length=50, blank=True, null=True)
-
-
-#new class (SPA experimental data)	
-class SpaCompound(models.Model):
-    '''Compound data copied from inventory data when the compound is used
-    in the experiment'''
-
-    visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.CASCADE)
-    library_name = models.CharField(max_length=100)
-    library_plate = models.CharField(max_length=100)
-    well = models.CharField(max_length=4)
-    code = models.CharField(max_length=100)
-    smiles = models.CharField(max_length=256)
-#    crystal = models.ForeignKey(Crystal, related_name="compounds", on_delete=models.PROTECT, blank=True, null=True) #to allow cocktails
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
+    
 
 #modified: added more attributes    
 class Crystal(models.Model):
 
     crystal_name = models.CharField(max_length=255, blank=True, null=True, db_index=True) # changed to allow null: a crystal enters database before it is assigned name
     target = models.ForeignKey(Target, blank=True, null=True, on_delete=models.CASCADE)
-    #compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True) # Compounds is now an inventory model, not used directly in an experiment
-    #visit = models.ForeignKey(SoakdbFiles, blank=True, null=True, on_delete=models.CASCADE) # blank/null temporarily added <---- old
     soakdb_file = models.ForeignKey(SoakdbFiles, blank=True, null=True, on_delete=models.CASCADE) # replaces old 'visit' field
-    visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.CASCADE) # new 'visit' field for experiments made without SoakDB
-    
     product = models.CharField(max_length=255, blank=True, null=True)
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
 
     # model types
     PREPROCESSING = 'PP'
@@ -204,27 +197,40 @@ class Crystal(models.Model):
     status = models.CharField(choices=CHOICES, max_length=2, default=PREPROCESSING)
 
     #added SPA attributes
-    crystal_plate = models.ForeignKey(CrystalPlate, blank=True, null=True, on_delete=models.PROTECT)
+    crystal_plate = models.ForeignKey(CrystalPlate, blank=True, null=True, on_delete=models.PROTECT, related_name='crystals')
     well = models.CharField(max_length=4,  blank=True, null=True)
-    echo_x = models.IntegerField(blank=True, null=True) #double-check if it shouldn't be float
-    echo_y = models.IntegerField(blank=True, null=True) #double-check if it shouldn't be float
+    echo_x = models.IntegerField(blank=True, null=True)
+    echo_y = models.IntegerField(blank=True, null=True)
     score = models.IntegerField(blank=True, null=True)
 
     class Meta:
-#        unique_together = ('crystal_name', 'visit', 'compound', 'product') <-- old
-        unique_together = ('crystal_name', 'visit', 'product') #removed compound from unique_together to allow for cocktails
+        unique_together = ('crystal_name', 'project', 'product') #removed compound from unique_together to allow for cocktails
+
+
+#new class (SPA experimental data)	
+class SpaCompound(models.Model):
+    '''Compound data copied from inventory data when the compound is used
+    in the experiment'''
+
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
+    library_name = models.CharField(max_length=100, blank=True, null=True)
+    library_plate = models.CharField(max_length=100, blank=True, null=True)
+    well = models.CharField(max_length=4, blank=True, null=True)
+    code = models.CharField(max_length=100, blank=True, null=True)
+    smiles = models.CharField(max_length=256, blank=True, null=True)
+    crystal = models.ForeignKey(Crystal, related_name="compounds", on_delete=models.PROTECT, blank=True, null=True) #to allow cocktails
 
 
 class CompoundCombination(models.Model):
-	'''for combisoaks and cocktails'''
-	visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.PROTECT)
-	number = models.IntegerField(blank=True, null=True)
-	compounds = models.ManyToManyField(SpaCompound)
-	related_crystals = models.CharField(max_length=64, null=True, blank=True)
-	'''if a combination is based on the result of the previous soak,
+    '''for combisoaks and cocktails'''
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
+    number = models.IntegerField(blank=True, null=True)
+    compounds = models.ManyToManyField(SpaCompound)
+    related_crystals = models.CharField(max_length=64, null=True, blank=True)
+	
+    '''if a combination is based on the result of the previous soak,
 	the crystals based on which the combination is created are recorder
 	as related_crystals'''
-
 
 #new class
 class SolventNotes(models.Model):
@@ -232,7 +238,7 @@ class SolventNotes(models.Model):
     not to be processed any further except for reminding the user to 
     apply cryo'''
     
-    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
     solvent = models.CharField(max_length=32, blank=True, null=True)
     solvent_concentration = models.FloatField(blank=True, null=True)
     soak_time = models.DurationField(blank=True, null=True)
@@ -252,7 +258,7 @@ class SoakAndCryoValues(models.Model):
     cryo_location = models.CharField(max_length=4, blank=True, null=True)
 
     soak_vol = models.FloatField(blank=True, null=True)
-    expr_conc = models.FloatField(blank=True, null=True) #compound concentration - can we rename?
+    expr_conc = models.FloatField(blank=True, null=True) #compound concentration
     cryo_transfer_vol = models.FloatField(blank=True, null=True)
 
     class Meta:
@@ -261,12 +267,16 @@ class SoakAndCryoValues(models.Model):
 class SolventBatch(models.Model):
     '''data common to the whole batch of crystals in a solvent testing experiment'''    
     number = models.IntegerField(default=0)
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
     soak_status = models.CharField(max_length=64, blank=True, null=True)
-    soak_time = models.IntegerField(blank=True, null=True)
+    soak_timestamp = models.DateTimeField(blank=True, null=True)
+    cryo_timestamp = models.DateTimeField(blank=True, null=True)
+    soaking_time = models.DurationField(blank=True, null=True)
     cryo_status = models.CharField(max_length=64, blank=True, null=True)
     
     def batch_name(self):
-        return 'Batch-' + self.number + '_' + self.crystal_plate.name #needs verification
+        name = 'Batch-' + str(self.number) + '_' + self.crystal_plate.name
+        return name #needs verification
 
 #new class (SPA experimental data)	
 class Batch(SolventBatch, SoakAndCryoValues):
@@ -280,6 +290,7 @@ class SolventTestingData(SoakAndCryoValues):
 
     solvent_name = models.CharField(max_length=64, blank=True, null=True)
     batch = models.ForeignKey(SolventBatch, blank=True, null=True, on_delete=models.CASCADE)
+
 
 
 class DataProcessing(models.Model):
@@ -345,22 +356,20 @@ class Dimple(models.Model):
 #heavily modified; some attributes added, some moved to Batch
 class Lab(models.Model):
 
-    crystal_name = models.OneToOneField(Crystal, on_delete=models.CASCADE, unique=True, blank=True, null=True)  # changed to foreign key
-    single_compound = models.ForeignKey(SpaCompound, on_delete=models.CASCADE, null=True, blank=True) # in regular experiments
-    compound_combination = models.ForeignKey(CompoundCombination, on_delete=models.CASCADE, null=True, blank=True) # with combisoaks and cocktails
-
-    #compound = models.OneToOneField(SpaCompound, on_delete=models.CASCADE, unique=True, blank=True, null=True)  #changed to allow cocktails
-    #to access crystal_name now: self.compound.crystal
-        
+    crystal_name = models.OneToOneField(Crystal, on_delete=models.CASCADE, unique=True, blank=True, null=True, related_name="lab_data")  # changed to foreign key
+    single_compound = models.ForeignKey(SpaCompound, on_delete=models.CASCADE, null=True, blank=True, related_name="lab_data") # in regular experiments
+    compound_combination = models.ForeignKey(CompoundCombination, on_delete=models.CASCADE, null=True, blank=True, related_name="lab_data") # with combisoaks and cocktails
+    solvent_data = models.ForeignKey(SolventTestingData, blank=True, null=True, on_delete=models.PROTECT) #null for compound screen
+    
     data_collection_visit = models.CharField(max_length=64, blank=True, null=True)
     harvest_status = models.CharField(max_length=64, blank=True, null=True)
     mounting_result = models.CharField(max_length=64, blank=True, null=True)
     mounting_time = models.CharField(max_length=64, blank=True, null=True)
-    visit = models.CharField(max_length=64, blank=True, null=True)
+    project = models.ForeignKey(Project, blank=True, null=True, on_delete=models.CASCADE)
 
     #new attributes
-    batch = models.ForeignKey(Batch, blank=True, null=True, on_delete=models.PROTECT) #null for solvent testing
-    solvent_data = models.ForeignKey(SolventTestingData, blank=True, null=True, on_delete=models.PROTECT) #null for compound screen
+    batch = models.ForeignKey(Batch, blank=True, null=True, on_delete=models.PROTECT, related_name="crystals") #null for solvent testing
+
     puck = models.CharField(max_length=100, blank=True, null=True)
     position = models.CharField(max_length=100, blank=True, null=True)
     pin_barcode = models.CharField(max_length=100, blank=True, null=True)
@@ -368,23 +377,7 @@ class Lab(models.Model):
     mounted_timestamp = models.DateTimeField(blank=True, null=True)
     ispyb_status = models.CharField(max_length=100, blank=True, null=True)
 
-'''
-#(requires installing json field:
-#pip install jsonfield)
-from jsonfield import JSONField
 
-class SolventAutofill(models.Model):
-    #patterns of typical parameters used in solvent testing; used for auto-filling data
-    
-    name = models.CharField(max_length=100)
-    solvents = JSONField() #array of strings
-    solvent_concentrations = JSONField() #array of floats
-    cryo = models.BooleanField()
-    comment = models.textField()
-'''
-
-
-#ONLY OLD UNCHANGED MODELS BELOW
 
 class Refinement(models.Model):
     bound_conf = models.CharField(max_length=255, blank=True, null=True, unique=True)
@@ -629,6 +622,7 @@ class ReviewResponses2(models.Model):
     decision_str = models.TextField(blank=False, null=False)
     reason = models.TextField(blank=False, null=False)
     time_submitted = models.IntegerField(blank=False, null=False)
+    comment = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'review_responses_new'

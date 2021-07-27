@@ -13,7 +13,7 @@ ReviewResponses2,
 Crystal,
 Lab,
 PanddaEvent,
-Proposals,
+Project,
 SoakdbFiles,
 DataProcessing,
 Ligand,
@@ -40,7 +40,7 @@ admin.site.register(ReviewResponses2)
 admin.site.register(Crystal)
 admin.site.register(Lab)
 admin.site.register(PanddaEvent)
-admin.site.register(Proposals)
+admin.site.register(Project)
 admin.site.register(SoakdbFiles)
 admin.site.register(DataProcessing)
 admin.site.register(Ligand)
