@@ -52,7 +52,8 @@ class LibraryPlate(models.Model):
     '''A library plate. last_tested is either the date of adding the plate
     to the database, or the last dispense test performed on it'''
 		
-    barcode = models.CharField(max_length=100, blank=True, null=True) #string to identify physical plate
+    barcode = models.CharField(max_length=100, blank=True, null=True)
+    name = models.CharField(max_length=100, blank=True, null=True) #new user-requested addition: a human-readable string
     library = models.ForeignKey(Library, on_delete=models.PROTECT, related_name="plates" )
     current = models.BooleanField(default=True)
     last_tested =  models.DateField(auto_now=True)
