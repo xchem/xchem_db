@@ -32,6 +32,7 @@ SILENCED_SYSTEM_CHECKS = ['django_mysql.W003']
 
 INSTALLED_APPS = [
     'xchem_db',
+    'ispyb_dja',
     'django_mysql',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'django_cas_ng',
+    'guardian'
 
 ]
 
@@ -153,3 +156,10 @@ GRAPH_MODELS = {
   'all_applications': True,
   'group_models': True,
 }
+
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "django_cas_ng.backends.CASBackend",
+    "guardian.backends.ObjectPermissionBackend",
+)
