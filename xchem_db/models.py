@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 
 # INVENTORY DATA
 
@@ -448,7 +447,7 @@ class SolventAutofill(models.Model):
     #patterns of typical parameters used in solvent testing; used for auto-filling data
     
     name = models.CharField(max_length=100)
-    solvents = JSONField() #array of strings
+    solvents = JSONField() #of strings
     solvent_concentrations = JSONField() #array of floats
     cryo = models.BooleanField()
     comment = models.textField()
@@ -760,10 +759,8 @@ class ProteinSite(models.Model):
         max_length=50, blank=False, null=False)
     site_crystal_form = models.CharField(
         max_length=50, blank=False, null=False)
-    # Will these work when we switch to MariaDB? Away from Postgres? Residue names for better precision
-    site_residue_names = models.ArrayField()
-    # Will these work when we switch to MariaDB? Away from Postgres?
-    site_residue_indicies = models.ArrayField()
+    site_residue_names = models.TextField(blank=False, null=False) #e.g. "MET17;CYS18" etc
+    site_residue_indicies = models.TextField(blank=False, null=False) #e.g. "17;18"
     # Not sure we really need it but might be useful.
     creator = models.CharField(blank=True)
 
