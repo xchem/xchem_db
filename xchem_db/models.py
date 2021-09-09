@@ -651,6 +651,7 @@ class FragalysisTarget(models.Model):
     metadata_file = models.FileField(blank=True, max_length=500)
     input_root = models.TextField()
     staging_root = models.TextField()
+    reference = models.FileField(blank=True, max_length=500) # Should this be a crystal_fk or a text field with the name of the file in it...
     biomol = models.FileField(blank=True, max_length=500)
     additional_files = models.ManyToManyField(MiscFiles)
 
