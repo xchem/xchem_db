@@ -9,7 +9,6 @@ Compounds,
 FragalysisTarget,
 PanddaAnalysis,
 PanddaStatisticalMap,
-ReviewResponses2,
 Crystal,
 Lab,
 PanddaEvent,
@@ -36,7 +35,6 @@ admin.site.register(Compounds)
 admin.site.register(FragalysisTarget)
 admin.site.register(PanddaAnalysis)
 admin.site.register(PanddaStatisticalMap)
-admin.site.register(ReviewResponses2)
 admin.site.register(Crystal)
 admin.site.register(Lab)
 admin.site.register(PanddaEvent)
