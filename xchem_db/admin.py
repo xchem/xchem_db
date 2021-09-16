@@ -23,10 +23,9 @@ Dimple,
 MetaData,
 PanddaRun,
 Refinement,
-Tasks,
 SiteMapping,
 ProteinSite,
-PipelineParams,
+PipelineParams
 )
 
 admin.site.register(BadAtoms)
@@ -55,4 +54,3 @@ admin.site.register(Dimple)
 admin.site.register(MetaData)
 admin.site.register(PanddaRun)
 admin.site.register(Refinement)
-admin.site.register(Tasks)
