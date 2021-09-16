@@ -33,7 +33,7 @@ class Compounds(models.Model):
     num_val_electrons = models.IntegerField(blank=True, null=True)
     ring_count = models.IntegerField(blank=True, null=True)
     tpsa = models.FloatField(blank=True, null=True)
-        
+    
     def __str__ (self):
         return self.code
 
@@ -44,7 +44,7 @@ class Library(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     for_industry = models.BooleanField(default=False)
     public = models.BooleanField(default=False)
-    
+
     def __str__ (self):
         return self.name
 
@@ -62,13 +62,7 @@ class LibraryPlate(models.Model):
         return len(self.compounds.all())
 
     def __str__ (self):
-        return f"[{self.id}]{self.library}, {self.barcode}"
-
-class PlateOpening(models.Model):
-	'''An instance when a library plate is opened'''
-	plate = models.ForeignKey(LibraryPlate, on_delete=models.CASCADE, related_name="opened")
-	date = models.DateField()
-	reason = models.TextField(blank=True, null=True)
+        return f"[{self.id}]{self.library}, {self.name}"
 
 class SourceWell(models.Model):
     '''location of a particular compound in a particular library plate; concentration not always available'''
@@ -82,12 +76,6 @@ class SourceWell(models.Model):
 
     def __str__ (self):
         return f"{self.library_plate}: {self.well}"
-
-class SWStatuschange(models.Model):
-	'''an instance of marking a SourceWell active or inactive'''
-	source_well = models.ForeignKey(SourceWell, on_delete=models.CASCADE, related_name="status_changes")
-	date = models.DateField()
-	activation = models.BooleanField(default=False)
 
 class LibrarySubset(models.Model):
     '''A selection of compounds from a specific library; always created automatically
@@ -649,7 +637,6 @@ class ReviewResponses2(models.Model):
     decision_str = models.TextField(blank=False, null=False)
     reason = models.TextField(blank=False, null=False)
     time_submitted = models.IntegerField(blank=False, null=False)
-    comment = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'review_responses_new'
@@ -673,6 +660,3 @@ class MetaData(models.Model):
     pdb_id = models.CharField(max_length=255, blank=True)
     fragalysis_name = models.CharField(max_length=255, unique=True)
     original_name = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'MetaData'
