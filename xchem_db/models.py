@@ -13,8 +13,8 @@ import os
 
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
-    uniprot_id = models.CharField(blank=True, null=True)
-    alias = models.CharField(blank=True, null=True)
+    uniprot_id = models.CharField(max_length=255, blank=True, null=True)
+    alias = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'target'
@@ -498,10 +498,10 @@ class ProteinSite(models.Model):
     site_chain = models.CharField(max_length=50, blank=False, null=False)
     site_conformation = models.CharField(max_length=50, blank=False, null=False)
     site_crystal_form = models.CharField(max_length=50, blank=False, null=False)
-    site_residue_names = ListTextField(base_field=models.TextField(), blank=False, null=False)
-    site_residue_indicies = ListTextField(base_field=models.IntegerField(), blank=False, null=False)
+    site_residue_names = ListTextField(base_field=models.CharField(max_length=255), blank=False, null=False)
+    site_residue_indicies = ListTextField(base_field=models.IntegerField(max_length=255), blank=False, null=False)
     # Not sure we really need it but might be useful.
-    creator = models.CharField(blank=True)
+    creator = models.CharField(max_length=255, blank=True)
 
     class Meta:
         db_table = 'protein_sites'
