@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.db import models
 
+from ispyb_dja.django_auth.models import IspybAuthorization
+
 #INVENTORY DATA
 
 class Protein(models.Model):
@@ -122,10 +124,16 @@ class Reference(models.Model):
 
 class Proposals(models.Model):
 
+    # Fields in this model:
+    # project = models.CharField(max_length=200, unique=True)
+    # proposal_visit = models.CharField(max_length=200, unique=True)
+    # users = models.ManyToManyField(User)
+    proposal_visit = models.ForeignKey(IspybAuthorization, on_delete=models.CASCADE)
+
     # TODO - can we refactor this for title [original comment]
-    proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
-    title = models.CharField(max_length=10, blank=True, null=True)
-    fedids = models.TextField(blank=True, null=True)
+    # proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    # title = models.CharField(max_length=10, blank=True, null=True)
+    # fedids = models.TextField(blank=True, null=True)
 
     #SPA-related data
     industry_user = models.BooleanField(default=True) # just in case false by default - fewer privileges
@@ -137,17 +145,17 @@ class Proposals(models.Model):
          return self.name + "proposal object"
          
 
-class Visit(models.Model):
-	visit_name = models.CharField(max_length=32, blank=True, null=True)
-	proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
+# class Visit(models.Model):
+#     visit_name = models.CharField(max_length=32, blank=True, null=True)
+#     proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
 	
 
 
 class SoakdbFiles(models.Model):
     filename = models.CharField(max_length=255, blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
-    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
-    visit = models.TextField(blank=False, null=False)
+    project = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
+    # visit = models.TextField(blank=False, null=False)
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -165,7 +173,7 @@ class SpaCompound(models.Model):
     '''Compound data copied from inventory data when the compound is used
     in the experiment'''
 
-    visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey(Proposals, blank=True, null=True, on_delete=models.CASCADE)
     library_name = models.CharField(max_length=100)
     library_plate = models.CharField(max_length=100)
     well = models.CharField(max_length=4)
@@ -181,7 +189,7 @@ class Crystal(models.Model):
     #compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True) # Compounds is now an inventory model, not used directly in an experiment
     #visit = models.ForeignKey(SoakdbFiles, blank=True, null=True, on_delete=models.CASCADE) # blank/null temporarily added <---- old
     soakdb_file = models.ForeignKey(SoakdbFiles, blank=True, null=True, on_delete=models.CASCADE) # replaces old 'visit' field
-    visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.CASCADE) # new 'visit' field for experiments made without SoakDB
+    project = models.ForeignKey(Proposals, blank=True, null=True, on_delete=models.CASCADE) # new 'visit' field for experiments made without SoakDB
     
     product = models.CharField(max_length=255, blank=True, null=True)
 
@@ -212,12 +220,12 @@ class Crystal(models.Model):
 
     class Meta:
 #        unique_together = ('crystal_name', 'visit', 'compound', 'product') <-- old
-        unique_together = ('crystal_name', 'visit', 'product') #removed compound from unique_together to allow for cocktails
+        unique_together = ('crystal_name', 'project', 'product') #removed compound from unique_together to allow for cocktails
 
 
 class CompoundCombination(models.Model):
 	'''for combisoaks and cocktails'''
-	visit = models.ForeignKey(Visit, blank=True, null=True, on_delete=models.PROTECT)
+	project = models.ForeignKey(Proposals, blank=True, null=True, on_delete=models.PROTECT)
 	number = models.IntegerField(blank=True, null=True)
 	compounds = models.ManyToManyField(SpaCompound)
 	related_crystals = models.CharField(max_length=64, null=True, blank=True)
@@ -232,7 +240,7 @@ class SolventNotes(models.Model):
     not to be processed any further except for reminding the user to 
     apply cryo'''
     
-    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE)
+    project = models.ForeignKey(Proposals, on_delete=models.CASCADE)
     solvent = models.CharField(max_length=32, blank=True, null=True)
     solvent_concentration = models.FloatField(blank=True, null=True)
     soak_time = models.DurationField(blank=True, null=True)
@@ -352,11 +360,11 @@ class Lab(models.Model):
     #compound = models.OneToOneField(SpaCompound, on_delete=models.CASCADE, unique=True, blank=True, null=True)  #changed to allow cocktails
     #to access crystal_name now: self.compound.crystal
         
-    data_collection_visit = models.CharField(max_length=64, blank=True, null=True)
+    data_collection_project = models.ForeignKey(Proposals, max_length=64, blank=True, null=True, on_delete=models.CASCADE)
     harvest_status = models.CharField(max_length=64, blank=True, null=True)
     mounting_result = models.CharField(max_length=64, blank=True, null=True)
     mounting_time = models.CharField(max_length=64, blank=True, null=True)
-    visit = models.CharField(max_length=64, blank=True, null=True)
+    data_collection_project = models.ForeignKey(Proposals, max_length=64, blank=True, null=True, on_delete=models.CASCADE)
 
     #new attributes
     batch = models.ForeignKey(Batch, blank=True, null=True, on_delete=models.PROTECT) #null for solvent testing
