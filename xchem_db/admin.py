@@ -23,7 +23,6 @@ Dimple,
 MetaData,
 PanddaRun,
 Refinement,
-Tasks,
 )
 
 admin.site.register(BadAtoms)
