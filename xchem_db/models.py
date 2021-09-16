@@ -19,7 +19,7 @@ class Target(models.Model):
         db_table = 'target'
 
 
-class Compound(models.Model):
+class Compounds(models.Model):
     smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
     compound_id = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
 
