@@ -498,8 +498,8 @@ class ProteinSite(models.Model):
     site_chain = models.CharField(max_length=50, blank=False, null=False)
     site_conformation = models.CharField(max_length=50, blank=False, null=False)
     site_crystal_form = models.CharField(max_length=50, blank=False, null=False)
-    site_residue_names = ListTextField(base_field=models.CharField(max_length=255), blank=False, null=False)
-    site_residue_indicies = ListTextField(base_field=models.IntegerField(max_length=255), blank=False, null=False)
+    site_residue_names = ListTextField(base_field=models.CharField(max_length=255, blank=False, null=False)
+    site_residue_indicies = ListTextField(base_field=models.IntegerField(blank=False, null=False)
     # Not sure we really need it but might be useful.
     creator = models.CharField(max_length=255, blank=True)
 
