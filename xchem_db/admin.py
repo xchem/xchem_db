@@ -9,7 +9,6 @@ Compounds,
 FragalysisTarget,
 PanddaAnalysis,
 PanddaStatisticalMap,
-ReviewResponses2,
 Crystal,
 Lab,
 PanddaEvent,
@@ -25,6 +24,9 @@ MetaData,
 PanddaRun,
 Refinement,
 Tasks,
+SiteMapping,
+ProteinSite,
+PipelineParams,
 )
 
 admin.site.register(BadAtoms)
@@ -36,7 +38,9 @@ admin.site.register(Compounds)
 admin.site.register(FragalysisTarget)
 admin.site.register(PanddaAnalysis)
 admin.site.register(PanddaStatisticalMap)
-admin.site.register(ReviewResponses2)
+admin.site.register(SiteMapping)
+admin.site.register(PipelineParams)
+admin.site.register(ProteinSite)
 admin.site.register(Crystal)
 admin.site.register(Lab)
 admin.site.register(PanddaEvent)
