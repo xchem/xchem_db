@@ -19,6 +19,7 @@ class Target(models.Model):
     pl_reduce_reference_frame = models.BooleanField(default=True)
     pl_covalent_attachments = models.BooleanField(default=True) 
     pl_additional_headers = models.TextField(blank=True, null=False)
+    pl_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'target'
