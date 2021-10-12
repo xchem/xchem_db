@@ -64,7 +64,7 @@ class SoakdbFiles(models.Model):
 class Crystal(models.Model):
     crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
+    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True) # ManyToMany
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
@@ -280,66 +280,28 @@ class PanddaSite(models.Model):
     class Meta:
         db_table = 'pandda_site'
         unique_together = ('pandda_run', 'site')
-
-
-class PanddaEvent(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
-    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
-    data_proc = models.ForeignKey(DataProcessing, on_delete=models.CASCADE)
-    pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-    event = models.IntegerField(blank=True, null=True, db_index=True)
-    event_centroid_x = models.FloatField(blank=True, null=True)
-    event_centroid_y = models.FloatField(blank=True, null=True)
-    event_centroid_z = models.FloatField(blank=True, null=True)
-    event_dist_from_site_centroid = models.TextField(blank=True, null=True)
-    lig_centroid_x = models.FloatField(blank=True, null=True)
-    lig_centroid_y = models.FloatField(blank=True, null=True)
-    lig_centroid_z = models.FloatField(blank=True, null=True)
-    lig_dist_event = models.FloatField(blank=True, null=True)
-    lig_id = models.TextField(blank=True, null=True)
-    pandda_event_map_native = models.TextField(blank=True, null=True)
-    pandda_event_map_cut = models.TextField(blank=True, null=True)
-    pandda_model_pdb = models.TextField(blank=True, null=True)
-    pandda_input_mtz = models.TextField(blank=True, null=True)
-    pandda_input_pdb = models.TextField(blank=True, null=True)
-    ligand_confidence_inspect = models.TextField(blank=True, null=True)
-    ligand_confidence = models.TextField(blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
-    interesting = models.BooleanField()
-    event_status = models.TextField(blank=True, null=True)
-    created_date = models.DateTimeField(auto_now_add=True, null=True)
-    modified_date = models.DateTimeField(auto_now=True, null=True)
-
-    # model types
-    NONE = 'NA'
-    SOAKDB = 'SD'
-    FRAGSPECT = 'FS'
-
-    CHOICES = (
-        (NONE, 'none'),
-        (SOAKDB, 'soak_db'),
-        (FRAGSPECT, 'fragspect')
-    )
-
-    ligand_confidence_source = models.CharField(
-        choices=CHOICES, max_length=2, default=NONE)
-
+        
+class PanddaBuild(models.Model):
+    build_id = models.IntegerField(blank=False, null=False)
+    crystal = models.ManyToMany(Crystal)
+    pandda_event = models.ForeignKey(PanddaEvent, on_delete=models.CASCADE)
+    # Other Statistics Relating to Build. For build-id 
     class Meta:
-        db_table = 'pandda_event'
-        unique_together = ('site', 'event', 'crystal', 'pandda_run')
-
-
-class PanddaEventStats(models.Model):
-    event = models.ForeignKey(PanddaEvent, on_delete=models.CASCADE)
-    one_minus_bdc = models.FloatField(blank=True, null=True)
-    cluster_size = models.IntegerField(blank=True, null=True)
-    glob_corr_av_map = models.FloatField(blank=True, null=True)
-    glob_corr_mean_map = models.FloatField(blank=True, null=True)
-    loc_corr_av_map = models.FloatField(blank=True, null=True)
-    loc_corr_mean_map = models.FloatField(blank=True, null=True)
-    z_mean = models.FloatField(blank=True, null=True)
-    z_peak = models.FloatField(blank=True, null=True)
+        db_table = 'pandda_build'
+        unique_together = ('crystal', 'pandda_event', 'build_id')
+        
+class PanddaCluster(models.Model):
+    cluster_id = models.IntegerField(blank=False, null=False)
+    crystals = models.ManyToMany(Crystal) # Check if Many to Many is correct here....
+    # Other Stuff for Conor to Fill.
+    class Meta:
+        db_table = 'pandda_cluster'
+        unique_together = ('cluster_id', 'crystals')
+        
+class PanddaProcessedDataset(model.Model):
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    events = models.ManyToMany(PanddaEvent)
+    pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     b_factor_scaled = models.FloatField(blank=True, null=True)
     high_res = models.FloatField(blank=True, null=True)
     low_res = models.FloatField(blank=True, null=True)
@@ -380,10 +342,68 @@ class PanddaEventStats(models.Model):
     z_map_std = models.FloatField(blank=True, null=True)
     scl_map_mean = models.FloatField(blank=True, null=True)
     scl_map_rms = models.FloatField(blank=True, null=True)
+    
+    class Meta:
+        db_table = 'pandda_processed_dataset'
+
+class PanddaEvent(models.Model):
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
+    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    data_proc = models.ForeignKey(DataProcessing, on_delete=models.CASCADE)
+    pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+    cluster = models.ForeignKey(PanddaCluster, on_delete=models.CASCADE, blank=True, null=True)
+    build = models.ManyToMany(PanddaBuild, blank=True, null=True) # Check if Many to Many is correct here....
+    selected_build = models.ForeignKey(PanddaBuild, blank=True, null=True)
+    comparators = models.ManyToMany(Crystal, blank=True, null=True)
+    event = models.IntegerField(blank=True, null=True, db_index=True)
+    event_centroid_x = models.FloatField(blank=True, null=True)
+    event_centroid_y = models.FloatField(blank=True, null=True)
+    event_centroid_z = models.FloatField(blank=True, null=True)
+    event_dist_from_site_centroid = models.TextField(blank=True, null=True)
+    lig_centroid_x = models.FloatField(blank=True, null=True)
+    lig_centroid_y = models.FloatField(blank=True, null=True)
+    lig_centroid_z = models.FloatField(blank=True, null=True)
+    lig_dist_event = models.FloatField(blank=True, null=True)
+    lig_id = models.TextField(blank=True, null=True)
+    pandda_event_map_native = models.TextField(blank=True, null=True)
+    pandda_event_map_cut = models.TextField(blank=True, null=True)
+    pandda_model_pdb = models.TextField(blank=True, null=True)
+    pandda_input_mtz = models.TextField(blank=True, null=True)
+    pandda_input_pdb = models.TextField(blank=True, null=True)
+    ligand_confidence_inspect = models.TextField(blank=True, null=True)
+    ligand_confidence = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
+    interesting = models.BooleanField(default=False)
+    event_status = models.TextField(blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True)
+    modified_date = models.DateTimeField(auto_now=True, null=True)
+    one_minus_bdc = models.FloatField(blank=True, null=True)
+    cluster_size = models.IntegerField(blank=True, null=True)
+    glob_corr_av_map = models.FloatField(blank=True, null=True)
+    glob_corr_mean_map = models.FloatField(blank=True, null=True)
+    loc_corr_av_map = models.FloatField(blank=True, null=True)
+    loc_corr_mean_map = models.FloatField(blank=True, null=True)
+    z_mean = models.FloatField(blank=True, null=True)
+    z_peak = models.FloatField(blank=True, null=True)
+
+    # model types
+    NONE = 'NA'
+    SOAKDB = 'SD'
+    FRAGSPECT = 'FS'
+
+    CHOICES = (
+        (NONE, 'none'),
+        (SOAKDB, 'soak_db'),
+        (FRAGSPECT, 'fragspect')
+    )
+
+    ligand_confidence_source = models.CharField(
+        choices=CHOICES, max_length=2, default=NONE)
 
     class Meta:
-        db_table = 'pandda_event_stats'
-
+        db_table = 'pandda_event'
+        unique_together = ('site', 'event', 'crystal', 'pandda_run')
 
 class MiscFiles(models.Model):
     file = models.FileField(max_length=500)
