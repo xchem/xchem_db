@@ -64,7 +64,7 @@ class SoakdbFiles(models.Model):
 class Crystal(models.Model):
     crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True) # ManyToMany
+    compound = models.ManyToMany(Compounds, on_delete=models.CASCADE, null=True, blank=True) # ManyToMany
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
@@ -92,7 +92,7 @@ class Crystal(models.Model):
     score = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        unique_together = ('crystal_name', 'visit',)
+        unique_together = ('crystal_name', 'visit')
         db_table = 'crystal'
 
 
@@ -285,18 +285,35 @@ class PanddaBuild(models.Model):
     build_id = models.IntegerField(blank=False, null=False)
     crystal = models.ManyToMany(Crystal)
     pandda_event = models.ForeignKey(PanddaEvent, on_delete=models.CASCADE)
+    file_name = models.FileField(blank=False, null=False)
+    score = models.FloatField(blank=False, null=False)
     # Other Statistics Relating to Build. For build-id 
     class Meta:
         db_table = 'pandda_build'
-        unique_together = ('crystal', 'pandda_event', 'build_id')
+        unique_together = ('pandda_event', 'build_id')
         
 class PanddaCluster(models.Model):
     cluster_id = models.IntegerField(blank=False, null=False)
-    crystals = models.ManyToMany(Crystal) # Check if Many to Many is correct here....
+    crystals = models.ManyToMany(Crystal)
+    cluster_string = models.TextField(blank=False, null=False)
+    size = models.FloatField(blank=False, null=False)
+    centroid_x = models.FloatField(blank=False, null=False)
+    centroid_y = models.FloatField(blank=False, null=False)
+    centroid_z = models.FloatField(blank=False, null=False)
+    cluster_shape =  models.IntegerField(blank=True, null=True)
+    cluster_mean =  models.FloatField(blank=True, null=True)
+    cluster_std = models.FloatField(blank=True, null=True)
+    cluster_min =  models.FloatField(blank=True, null=True))
+    cluster_max =  models.FloatField(blank=True, null=True)
+    sigma_shape = models.IntegerField(blank=True, null=True)
+    sigma_mean = models.FloatField(blank=True, null=True)
+    sigma_std = models.FloatField(blank=True, null=True)
+    sigma_min = models.FloatField(blank=True, null=True)
+    sigma_max = models.FloatField(blank=True, null=True)
+    
     # Other Stuff for Conor to Fill.
     class Meta:
         db_table = 'pandda_cluster'
-        unique_together = ('cluster_id', 'crystals')
         
 class PanddaProcessedDataset(model.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
@@ -403,7 +420,7 @@ class PanddaEvent(models.Model):
 
     class Meta:
         db_table = 'pandda_event'
-        unique_together = ('site', 'event', 'crystal', 'pandda_run')
+        unique_together = ('site', 'event', 'pandda_run')
 
 class MiscFiles(models.Model):
     file = models.FileField(max_length=500)
