@@ -24,8 +24,7 @@ MetaData,
 PanddaRun,
 Refinement,
 SiteMapping,
-ProteinSite,
-PipelineParams
+ProteinSite
 )
 
 admin.site.register(BadAtoms)
@@ -38,7 +37,6 @@ admin.site.register(FragalysisTarget)
 admin.site.register(PanddaAnalysis)
 admin.site.register(PanddaStatisticalMap)
 admin.site.register(SiteMapping)
-admin.site.register(PipelineParams)
 admin.site.register(ProteinSite)
 admin.site.register(Crystal)
 admin.site.register(Lab)

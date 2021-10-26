@@ -10,11 +10,16 @@ from django.db import models
 from django_mysql.models import ListTextField
 import os
 
-
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
     uniprot_id = models.CharField(max_length=255, blank=True, null=True)
     alias = models.CharField(max_length=255, blank=True, null=True)
+    pl_reference = models.FileField(max_length=500, blank=True)
+    pl_monomeric = models.BooleanField(default=False)
+    pl_reduce_reference_frame = models.BooleanField(default=True)
+    pl_covalent_attachments = models.BooleanField(default=True) 
+    pl_additional_headers = models.TextField(blank=True, null=False)
+    pl_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'target'
@@ -59,7 +64,7 @@ class SoakdbFiles(models.Model):
 class Crystal(models.Model):
     crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
+    compound = models.ManyToManyField(Compounds)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
@@ -449,11 +454,11 @@ class ReviewResponses(models.Model):
         db_table = 'review_responses'
 
 class BadAtoms(models.Model):
-    review = models.ForeignKey(ReviewResponses, on_delete=models.CASCADE)
+    #review = models.ForeignKey(ReviewResponses, on_delete=models.CASCADE) # Removing review attachment - now solely limited to the Ligands (not fragalysis ligands)?
     ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
-    atomid = models.IntegerField(blank=False, null=False)
-    comment = models.TextField(blank=False, null=False)
-    atomname = models.TextField(blank=True, null=False)
+    atomid = models.TextField(blank=False, null=False) # Will be now stored as a plain "0;1;2;3" string instead of each atom being an individual row.
+    comment = models.TextField(blank=False, null=False) # Same thing as above
+    atomname = models.TextField(blank=True, null=False) # Same thing as above
 
     class Meta:
         db_table = 'bad_atoms'
@@ -470,26 +475,6 @@ class MetaData(models.Model):
 
     class Meta:
         db_table = 'meta_data'
-
-
-class PipelineParams(models.Model):
-    """
-    Gist of PipelineParams, for a given target we can control reference file
-     - And the fragalysis-api parameters
-     - Room to expand?
-    """
-    target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    # 500 enough?, # make this mandatory, needs to exist but can be changed.
-    reference = models.FileField(max_length=500, blank=True)
-    # Bool # If TRUE do not apply pisa + gemmi convert
-    monomeric = models.BooleanField(default=False)
-    # Bool # If TRUE use option to reduce the reference frame in fragalysis-api
-    reduce_reference_frame = models.BooleanField(default=True)
-    covalent_attachments = models.BooleanField(default=True)  # Bool
-    additional_headers = models.TextField(blank=True, null=False)
-
-    class Meta:
-        db_table = 'pipeline_params'
 
 
 class ProteinSite(models.Model):
