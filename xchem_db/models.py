@@ -64,7 +64,7 @@ class SoakdbFiles(models.Model):
 class Crystal(models.Model):
     crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ManyToMany(Compounds)
+    compound = models.ManyToManyField(Compounds)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
