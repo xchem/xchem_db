@@ -99,7 +99,7 @@ class Crystal(models.Model):
 
 class CrystalCompound(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    compound = models.ForeignKey(Compound, on_delete=models.CASCADE)
+    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     productSmiles = models.CharField(max_length=255, blank=True, null=True) # Need to find way of specifying this...
     
     class Meta:
