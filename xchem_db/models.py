@@ -27,7 +27,7 @@ class Target(models.Model):
 
 class Compounds(models.Model):
     smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
-    compound_id = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
+    compound_string = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True) # Zcode...
 
     class Meta:
         db_table = 'compound'
@@ -60,11 +60,13 @@ class SoakdbFiles(models.Model):
 
     class Meta:
         db_table = 'soakdb_files'
+        
 
+    
 class Crystal(models.Model):
     crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ManyToManyField(Compounds)
+    compound = models.ManyToManyField(Compounds, through='CrystalCompound')
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
@@ -95,7 +97,14 @@ class Crystal(models.Model):
         unique_together = ('crystal_name', 'visit',)
         db_table = 'crystal'
 
-
+class CrystalCompound(models.Model):
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    compound = models.ForeignKey(Compound, on_delete=models.CASCADE)
+    productSmiles = models.CharField(max_length=255, blank=True, null=True) # Need to find way of specifying this...
+    
+    class Meta:
+        db_table = 'crystal_compound'
+    
 # TODO: think about how to actually do this
 # class CompoundCombination(models.Model):
 #     '''for combisoaks and cocktails'''
@@ -395,8 +404,6 @@ class MiscFiles(models.Model):
 
 
 class FragalysisTarget(models.Model):
-    # can just be visit number if private
-    public = models.BooleanField()
     target = models.CharField(max_length=255)
     metadata_file = models.FileField(blank=True, max_length=500)
     input_root = models.TextField()
@@ -434,7 +441,7 @@ class Ligand(models.Model):
         FragalysisLigand, on_delete=models.CASCADE)
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
+    #compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'ligand'
@@ -472,6 +479,7 @@ class MetaData(models.Model):
     pdb_id = models.CharField(max_length=255, blank=True)
     fragalysis_name = models.CharField(max_length=255, unique=True)
     original_name = models.CharField(max_length=255)
+    status = models.CharField(max_length=255, blank=True)
 
     class Meta:
         db_table = 'meta_data'
