@@ -26,12 +26,12 @@ class Target(models.Model):
 
 
 class Compounds(models.Model):
-    smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
-    compound_string = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True) # Zcode...
+    smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True)
+    compound_string = models.CharField(max_length=255, blank=True, null=True, db_index=True) # Zcode...
 
     class Meta:
         db_table = 'compound'
-        unique_together = ['smiles', 'compound_id']
+        unique_together = ['smiles', 'compound_string']
 
 class Reference(models.Model):
     reference_pdb = models.CharField(
