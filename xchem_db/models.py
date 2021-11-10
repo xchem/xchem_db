@@ -66,7 +66,7 @@ class SoakdbFiles(models.Model):
 class Crystal(models.Model):
     crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    compound = models.ManyToManyField(Compounds, through='CrystalCompound')
+    compound = models.ManyToManyField(Compounds, through='CrystalCompoundPairs')
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
@@ -97,13 +97,13 @@ class Crystal(models.Model):
         unique_together = ('crystal_name', 'visit',)
         db_table = 'crystal'
 
-class CrystalCompound(models.Model):
+class CrystalCompoundPairs(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
-    productSmiles = models.CharField(max_length=255, blank=True, null=True) # Need to find way of specifying this...
+    product_smiles = models.CharField(max_length=255, blank=True, null=True) # Need to find way of specifying this...
     
     class Meta:
-        db_table = 'crystal_compound'
+        db_table = 'crystal_compound_pairs'
     
 # TODO: think about how to actually do this
 # class CompoundCombination(models.Model):
