@@ -20,10 +20,11 @@ jobs:
       run: |
         git config --global user.email "reskyner@googlemail.com"
         git config --global user.name "Rachael Skyner"
+        git config --global pull.ff only
         git clone https://$API_TOKEN_GITHUB@github.com/DiamondLightSource/ispyb-database
         cd ispyb-database
         git checkout -b xchem-updates
-        git pull origin xchem-updates
+        git pull origin xchem-updates 
         mkdir -p schemas/xchem_db
         mkdir -p schemas/xchem_db/updates
         cp ../init.sql schemas/xchem_db
